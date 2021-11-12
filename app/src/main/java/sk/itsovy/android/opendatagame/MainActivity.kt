@@ -9,9 +9,13 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import sk.itsovy.android.opendatagame.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private val namesviewmodel: NamesViewModel by viewModels() {
+        NamesViewModel.NamesViewModelFactory((application as NamesApplication).repository)
+    }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -42,7 +46,12 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
+            R.id.action_load -> {
+                namesviewmodel.loadRecords()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
+
         }
     }
 
