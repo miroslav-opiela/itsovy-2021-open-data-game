@@ -10,15 +10,19 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import sk.itsovy.android.opendatagame.databinding.ActivityMainBinding
+import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
-    private val namesviewmodel: NamesViewModel by viewModels() {
+    private val model: NamesViewModel by viewModels() {
         NamesViewModel.NamesViewModelFactory((application as NamesApplication).repository)
     }
-
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+    // na zaciatku je prazdny zoznam aby sa nepracovalo s null
+    var currentData: List<Record> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +33,18 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            val list = getRandomList(4)
+            // adapter.submitList
         }
+        model.allRecords.observe(this, Observer {
+            currentData = it
+            // records -> currentData = records
+        })
+    }
+
+    private fun getRandomList(count: Int) : List<Record> {
+        val shuffledList = currentData.shuffled()
+        return shuffledList.subList(0, min(count, shuffledList.size))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -47,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> true
             R.id.action_load -> {
-                namesviewmodel.loadRecords()
+                model.loadRecords()
                 true
             }
             else -> super.onOptionsItemSelected(item)
