@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import sk.itsovy.android.opendatagame.databinding.ActivityMainBinding
 import kotlin.math.min
 
@@ -32,9 +33,13 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        val adapter = NamesAdapter()
+        binding.includedContentMain.recyclerViewNames.adapter = adapter
+        binding.includedContentMain.recyclerViewNames.layoutManager = LinearLayoutManager(this)
+
         binding.fab.setOnClickListener { view ->
             val list = getRandomList(4)
-            // adapter.submitList
+            adapter.submitList(list)
         }
         model.allRecords.observe(this, Observer {
             currentData = it
