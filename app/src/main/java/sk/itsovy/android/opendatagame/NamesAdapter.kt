@@ -11,12 +11,34 @@ import sk.itsovy.android.opendatagame.databinding.ItemLayoutBinding
 
 class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallback) {
 
-    class NamesViewHolder(private val binding: ItemLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
+    // hovori ci ma zobrazit cisla
+    var visibleCounts = false
+        // vlastny setter - pri zmene hodnoty sa aj prekresli recycler view
+        set(value) {
+            // nastavenie hodnoty
+            field = value
+            // notifyDataSetChanged() dalo warning - v tomto pripade je aj toto v pohode
+            notifyItemRangeChanged(0, currentList.size)
+        }
 
-        fun bind(record: Record) {
+    // property ktora hovori ci je konfiguracia vyherna
+    val win : Boolean
+        get() {
+            // zip with next - spoji i-ty prvok s i+1 - ak je horna hodnota mensia tak nie je vyhra
+            currentList.zipWithNext{ a, b -> if (a.count < b.count) return false }
+            // nenasiel sa problem, teda je vyherna konfiguracia
+            return true
+        }
+
+    class NamesViewHolder(private val binding: ItemLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(record: Record, visibleCounts: Boolean) {
             binding.textViewName.text = record.name
             binding.textViewNumber.text = "Count: ${record.count}"
-            binding.textViewNumber.visibility = View.INVISIBLE
+            binding.textViewNumber.visibility = if (visibleCounts) View.VISIBLE else View.INVISIBLE
+
+            // vis = visibleCounts ? visible : invisible
         }
 
     }
@@ -27,7 +49,7 @@ class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallb
     }
 
     override fun onBindViewHolder(holder: NamesViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), visibleCounts)
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Record>() {
