@@ -1,6 +1,7 @@
 package sk.itsovy.android.opendatagame
 
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -10,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import sk.itsovy.android.opendatagame.databinding.ItemLayoutBinding
 import java.util.*
 
-class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallback) {
+class NamesAdapter(val listener: OnImageClickListener) : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallback) {
 
     // hovori ci ma zobrazit cisla
     var visibleCounts = false
@@ -31,7 +32,7 @@ class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallb
             return true
         }
 
-    class NamesViewHolder(private val binding: ItemLayoutBinding) :
+    class NamesViewHolder(private val binding: ItemLayoutBinding, val listener: OnImageClickListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(record: Record, visibleCounts: Boolean) {
@@ -39,14 +40,21 @@ class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallb
             binding.textViewNumber.text = "Count: ${record.count}"
             binding.textViewNumber.visibility = if (visibleCounts) View.VISIBLE else View.INVISIBLE
 
-            // vis = visibleCounts ? visible : invisible
+            binding.reorderIcon.setOnTouchListener {
+                _, motionEvent ->
+                if (motionEvent.actionMasked == MotionEvent.ACTION_DOWN) {
+                    listener.onImageClick(NamesViewHolder@this)
+                }
+
+                return@setOnTouchListener true
+            }
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NamesViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return NamesViewHolder(binding)
+        return NamesViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: NamesViewHolder, position: Int) {

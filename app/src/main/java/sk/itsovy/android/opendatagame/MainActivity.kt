@@ -1,13 +1,8 @@
 package sk.itsovy.android.opendatagame
 
 import android.os.Bundle
-import android.telephony.ims.ImsMmTelManager
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -19,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import sk.itsovy.android.opendatagame.databinding.ActivityMainBinding
 import kotlin.math.min
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnImageClickListener{
     private val model: NamesViewModel by viewModels() {
         NamesViewModel.NamesViewModelFactory((application as NamesApplication).repository)
     }
@@ -42,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        adapter = NamesAdapter()
+        adapter = NamesAdapter(this)
         binding.includedContentMain.recyclerViewNames.adapter = adapter
         binding.includedContentMain.recyclerViewNames.layoutManager = LinearLayoutManager(this)
         itemTouchHelper.attachToRecyclerView(binding.includedContentMain.recyclerViewNames)
@@ -120,4 +115,12 @@ class MainActivity : AppCompatActivity() {
         ItemTouchHelper(simpleItemTouchCallback)
     }
 
+    override fun onImageClick(viewHolder: NamesAdapter.NamesViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
+    }
+
+}
+
+interface OnImageClickListener {
+    fun onImageClick(viewHolder: NamesAdapter.NamesViewHolder)
 }
