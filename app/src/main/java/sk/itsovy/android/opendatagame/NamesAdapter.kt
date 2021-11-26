@@ -3,6 +3,7 @@ package sk.itsovy.android.opendatagame
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,7 @@ class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallb
         fun bind(record: Record) {
             binding.textViewName.text = record.name
             binding.textViewNumber.text = "Count: ${record.count}"
+            binding.textViewNumber.visibility = View.INVISIBLE
         }
 
     }

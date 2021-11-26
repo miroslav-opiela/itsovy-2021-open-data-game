@@ -14,9 +14,13 @@ class NamesRepository(val namesDao: NamesDao) {
     @WorkerThread
     suspend fun loadRecords(){
         namesDao.deleteAll()
-        namesDao.insertRecord(Record("Bromilda",956))
-        namesDao.insertRecord(Record("Jaro",65))
-        namesDao.insertRecord(Record("Petra",1))
+        namesDao.insertRecord(Record("Daniel", 1))
+        namesDao.insertRecord(Record("Brano", 1))
+        namesDao.insertRecord(Record("Simon", 1))
+        namesDao.insertRecord(Record("Patrik", 1))
+        namesDao.insertRecord(Record("Adam", 1))
+        namesDao.insertRecord(Record("Kovi", 1))
+        namesDao.insertRecord(Record("Illia", 1))
     }
 
 }

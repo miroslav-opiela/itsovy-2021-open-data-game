@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         binding.includedContentMain.recyclerViewNames.layoutManager = LinearLayoutManager(this)
 
         binding.fab.setOnClickListener { view ->
-            val list = getRandomList(4)
+            val list = getRandomList(100)
             adapter.submitList(list)
         }
         model.allRecords.observe(this, Observer {
