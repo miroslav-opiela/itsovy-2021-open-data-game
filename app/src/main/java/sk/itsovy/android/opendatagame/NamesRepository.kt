@@ -1,6 +1,12 @@
 package sk.itsovy.android.opendatagame
 
 import androidx.annotation.WorkerThread
+import kotlinx.coroutines.suspendCancellableCoroutine
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class NamesRepository(val namesDao: NamesDao) {
 
@@ -14,13 +20,33 @@ class NamesRepository(val namesDao: NamesDao) {
     @WorkerThread
     suspend fun loadRecords(){
         namesDao.deleteAll()
-        namesDao.insertRecord(Record("Daniel", 70))
-        namesDao.insertRecord(Record("Brano", 80))
-        namesDao.insertRecord(Record("Simon", 1))
-        namesDao.insertRecord(Record("Patrik", 3))
-        namesDao.insertRecord(Record("Adam", 100))
-        namesDao.insertRecord(Record("Kovi", 30))
-        namesDao.insertRecord(Record("Illia", 65))
+
+        val call = RestApi.namesRestDao.getNames()
+        val response = suspendCancellableCoroutine<Response<List<Record>>> {
+            call.enqueue(
+                object : Callback<List<Record>> {
+                    override fun onResponse(
+                        call: Call<List<Record>>,
+                        response: Response<List<Record>>
+                    ) {
+                        it.resume(response)
+                    }
+
+                    override fun onFailure(call: Call<List<Record>>, t: Throwable) {
+                        it.cancel(t)
+                        //it.resumeWithException(t)
+                    }
+                }
+            )
+        }
+
+        val list = response.body()
+        if (list != null) {
+            for (record in list) {
+                namesDao.insertRecord(record)
+            }
+        }
+
     }
 
 }
