@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sk.itsovy.android.opendatagame">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
     <application
         android:name=".NamesApplication"
         android:allowBackup="true"
@@ -12,6 +10,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OpenDataGame">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/title_activity_settings" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,5 +27,7 @@
             </intent-filter>
         </activity>
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
