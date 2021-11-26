@@ -1,6 +1,7 @@
 package sk.itsovy.android.opendatagame
 
 import android.os.Bundle
+import android.telephony.ims.ImsMmTelManager
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -12,7 +13,9 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import sk.itsovy.android.opendatagame.databinding.ActivityMainBinding
 import kotlin.math.min
 
@@ -42,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         adapter = NamesAdapter()
         binding.includedContentMain.recyclerViewNames.adapter = adapter
         binding.includedContentMain.recyclerViewNames.layoutManager = LinearLayoutManager(this)
+        itemTouchHelper.attachToRecyclerView(binding.includedContentMain.recyclerViewNames)
 
         binding.fab.setOnClickListener {
             onFabClicked()
@@ -89,6 +93,31 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
 
         }
+    }
+
+    private val itemTouchHelper by lazy {
+        var simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, 0
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val adapter = recyclerView.adapter as NamesAdapter
+                val from = viewHolder.adapterPosition
+                val to = target.adapterPosition
+                adapter.exchangeItems(from, to)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // do nothing
+            }
+        }
+
+        // itemTouchHelper = new ItemTouchHelper(callback)
+        ItemTouchHelper(simpleItemTouchCallback)
     }
 
 }

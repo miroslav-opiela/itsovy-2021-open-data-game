@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import sk.itsovy.android.opendatagame.databinding.ItemLayoutBinding
+import java.util.*
 
 class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallback) {
 
@@ -50,6 +51,12 @@ class NamesAdapter : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallb
 
     override fun onBindViewHolder(holder: NamesViewHolder, position: Int) {
         holder.bind(getItem(position), visibleCounts)
+    }
+
+    fun exchangeItems(from: Int, to: Int) {
+        val list = currentList.toMutableList()
+        Collections.swap(list, from, to)
+        submitList(list)
     }
 
     object DiffCallback : DiffUtil.ItemCallback<Record>() {
