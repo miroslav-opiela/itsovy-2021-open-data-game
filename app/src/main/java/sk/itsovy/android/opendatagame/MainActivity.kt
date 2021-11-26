@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -66,7 +67,12 @@ class MainActivity : AppCompatActivity(), OnImageClickListener{
     }
 
     private fun getRandomList(count: Int) : List<Record> {
-        val shuffledList = currentData.shuffled()
+        val pref = PreferenceManager.getDefaultSharedPreferences(this)
+        val include = pref.getBoolean(getString(R.string.includeSingle), false)
+
+        var list = currentData
+        if (!include) list = list.filter { it.count > 1 }
+        val shuffledList = list.shuffled()
         return shuffledList.subList(0, min(count, shuffledList.size))
     }
 
