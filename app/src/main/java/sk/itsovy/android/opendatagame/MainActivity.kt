@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import sk.itsovy.android.opendatagame.databinding.ActivityMainBinding
 import kotlin.math.min
 
-class MainActivity : AppCompatActivity(), OnImageClickListener{
+class MainActivity : AppCompatActivity() {
     private val model: NamesViewModel by viewModels() {
         NamesViewModel.NamesViewModelFactory((application as NamesApplication).repository)
     }
@@ -39,7 +39,9 @@ class MainActivity : AppCompatActivity(), OnImageClickListener{
 
         setSupportActionBar(binding.toolbar)
 
-        adapter = NamesAdapter(this)
+        adapter = NamesAdapter {
+            itemTouchHelper.startDrag(it)
+        }
         binding.includedContentMain.recyclerViewNames.adapter = adapter
         binding.includedContentMain.recyclerViewNames.layoutManager = LinearLayoutManager(this)
         itemTouchHelper.attachToRecyclerView(binding.includedContentMain.recyclerViewNames)
@@ -125,13 +127,5 @@ class MainActivity : AppCompatActivity(), OnImageClickListener{
         // itemTouchHelper = new ItemTouchHelper(callback)
         ItemTouchHelper(simpleItemTouchCallback)
     }
-
-    override fun onImageClick(viewHolder: NamesAdapter.NamesViewHolder) {
-        itemTouchHelper.startDrag(viewHolder)
-    }
-
 }
 
-interface OnImageClickListener {
-    fun onImageClick(viewHolder: NamesAdapter.NamesViewHolder)
-}

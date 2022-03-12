@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import sk.itsovy.android.opendatagame.databinding.ItemLayoutBinding
 import java.util.*
 
-class NamesAdapter(val listener: OnImageClickListener) : ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallback) {
+class NamesAdapter(private val onClick: (RecyclerView.ViewHolder) -> Unit) :
+    ListAdapter<Record, NamesAdapter.NamesViewHolder>(DiffCallback) {
 
     // hovori ci ma zobrazit cisla
     var visibleCounts = false
@@ -24,15 +25,18 @@ class NamesAdapter(val listener: OnImageClickListener) : ListAdapter<Record, Nam
         }
 
     // property ktora hovori ci je konfiguracia vyherna
-    val win : Boolean
+    val win: Boolean
         get() {
             // zip with next - spoji i-ty prvok s i+1 - ak je horna hodnota mensia tak nie je vyhra
-            currentList.zipWithNext{ a, b -> if (a.count < b.count) return false }
+            currentList.zipWithNext { a, b -> if (a.count < b.count) return false }
             // nenasiel sa problem, teda je vyherna konfiguracia
             return true
         }
 
-    class NamesViewHolder(private val binding: ItemLayoutBinding, val listener: OnImageClickListener) :
+    class NamesViewHolder(
+        private val binding: ItemLayoutBinding,
+        private val onClick: (RecyclerView.ViewHolder) -> Unit
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(record: Record, visibleCounts: Boolean) {
@@ -40,10 +44,9 @@ class NamesAdapter(val listener: OnImageClickListener) : ListAdapter<Record, Nam
             binding.textViewNumber.text = "Count: ${record.count}"
             binding.textViewNumber.visibility = if (visibleCounts) View.VISIBLE else View.INVISIBLE
 
-            binding.reorderIcon.setOnTouchListener {
-                _, motionEvent ->
+            binding.reorderIcon.setOnTouchListener { _, motionEvent ->
                 if (motionEvent.actionMasked == MotionEvent.ACTION_DOWN) {
-                    listener.onImageClick(NamesViewHolder@this)
+                    onClick(NamesViewHolder@this)
                 }
 
                 return@setOnTouchListener true
@@ -54,7 +57,7 @@ class NamesAdapter(val listener: OnImageClickListener) : ListAdapter<Record, Nam
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NamesViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return NamesViewHolder(binding, listener)
+        return NamesViewHolder(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: NamesViewHolder, position: Int) {
