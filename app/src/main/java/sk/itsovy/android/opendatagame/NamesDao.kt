@@ -15,6 +15,9 @@ interface NamesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRecord(record: Record)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(records: List<Record>)
+
     @Query("DELETE FROM record")
     suspend fun deleteAll()
 }
